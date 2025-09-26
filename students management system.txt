@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 100
+
+// Structure to store student data
+struct Student {
+    int roll;
+    char name[50];
+    float marks;
+};
+
+// Function prototypes
+void addStudents(struct Student s[], int *n);
+void displayStudents(struct Student s[], int n);
+void searchByRoll(struct Student s[], int n, int roll);
+void searchByName(struct Student s[], int n, char name[]);
+void sortByMarks(struct Student s[], int n);
+void sortByName(struct Student s[], int n);
+
+int main() {
+    struct Student students[MAX];
+    int n = 0, choice, roll;
+    char name[50];
+
+    while (1) {
+        printf("\n--- Student Record System ---\n");
+        printf("1. Add Student Records\n");
+        printf("2. Display All Records\n");
+        printf("3. Search by Roll Number\n");
+        printf("4. Search by Name\n");
+        printf("5. Sort by Marks\n");
+        printf("6. Sort by Name\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // Consume newline after int
+
+        switch (choice) {
+            case 1:
+                addStudents(students, &n);
+                break;
+            case 2:
+                displayStudents(students, n);
+                break;
+            case 3:
+                printf("Enter roll number to search: ");
+                scanf("%d", &roll);
+                searchByRoll(students, n, roll);
+                break;
+            case 4:
+                printf("Enter name to search: ");
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = '\0'; // Remove newline
+                searchByName(students, n, name);
+                break;
+            case 5:
+                sortByMarks(students, n);
+                printf("Sorted by marks.\n");
+                break;
+            case 6:
+                sortByName(students, n);
+                printf("Sorted by name.\n");
+                break;
+            case 0:
+                return 0;
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
+
+// Function to add students
+void addStudents(struct Student s[], int *n) {
+    int count, i;
+    printf("How many students do you want to add? ");
+    scanf("%d", &count);
+    getchar(); // consume newline
+
+    for (i = 0; i < count; i++) {
+        printf("\nStudent %d:\n", *n + 1);
+        printf("Enter roll number: ");
+        scanf("%d", &s[*n].roll);
+        getchar(); // consume newline
+        printf("Enter name: ");
+        fgets(s[*n].name, sizeof(s[*n].name), stdin);
+        s[*n].name[strcspn(s[*n].name, "\n")] = '\0'; // Remove newline
+        printf("Enter marks: ");
+        scanf("%f", &s[*n].marks);
+        getchar();
+        (*n)++;
+    }
+}
+
+// Function to display students
+void displayStudents(struct Student s[], int n) {
+    if (n == 0) {
+        printf("No records to display.\n");
+        return;
+    }
+
+    printf("\n%-10s %-20s %-10s\n", "Roll No", "Name", "Marks");
+    for (int i = 0; i < n; i++) {
+        printf("%-10d %-20s %-10.2f\n", s[i].roll, s[i].name, s[i].marks);
+    }
+}
+
+// Function to search by roll number
+void searchByRoll(struct Student s[], int n, int roll) {
+    for (int i = 0; i < n; i++) {
+        if (s[i].roll == roll) {
+            printf("Record Found: %s - %.2f\n", s[i].name, s[i].marks);
+            return;
+        }
+    }
+    printf("Roll number %d not found.\n", roll);
+}
+
+// Function to search by name
+void searchByName(struct Student s[], int n, char name[]) {
+    for (int i = 0; i < n; i++) {
+        if (strcmp(s[i].name, name) == 0) {
+            printf("Record Found: Roll %d - %.2f\n", s[i].roll, s[i].marks);
+            return;
+        }
+    }
+    printf("Name '%s' not found.\n", name);
+}
+
+// Function to sort by marks (descending)
+void sortByMarks(struct Student s[], int n) {
+    struct Student temp;
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            if (s[i].marks < s[j].marks) {
+                temp = s[i];
+                s[i] = s[j];
+                s[j] = temp;
+            }
+        }
+    }
+}
+
+// Function to sort by name (ascending)
+void sortByName(struct Student s[], int n) {
+    struct Student temp;
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            if (strcmp(s[i].name, s[j].name) > 0) {
+                temp = s[i];
+                s[i] = s[j];
+                s[j] = temp;
+            }
+        }
+    }
+}
